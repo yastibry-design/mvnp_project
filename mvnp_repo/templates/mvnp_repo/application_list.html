@@ -1,0 +1,345 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}Research Applications — MVNP Repository{% endblock %}
+
+{% block content %}
+<div class="appl-shell">
+
+  <!-- Page header -->
+  <div class="appl-header">
+    <div>
+      <h1>Research Applications</h1>
+      <p class="auth-card__subtitle">
+        All applications are saved here until reviewed. 
+      </p>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="appl-summary">
+    <div class="appl-stat appl-stat--pending">
+      <span class="appl-stat__num">{{ pending_count }}</span>
+      <span class="appl-stat__label">Pending</span>
+    </div>
+    <div class="appl-stat appl-stat--approved">
+      <span class="appl-stat__num">{{ approved_count }}</span>
+      <span class="appl-stat__label">Approved</span>
+    </div>
+    <div class="appl-stat appl-stat--declined">
+      <span class="appl-stat__num">{{ declined_count }}</span>
+      <span class="appl-stat__label">Declined</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="appl-tabs">
+    <button class="appl-tab active" data-tab="tab-pending">
+      Pending
+      {% if pending_count %}<span class="appl-tab-badge">{{ pending_count }}</span>{% endif %}
+    </button>
+    <button class="appl-tab" data-tab="tab-approved">Approved</button>
+    <button class="appl-tab" data-tab="tab-declined">Declined</button>
+    <button class="appl-tab" data-tab="tab-all">All</button>
+  </div>
+
+  <!-- ── PENDING ── -->
+  <div class="appl-tab-content active" id="tab-pending">
+    {% if pending %}
+      <div class="appl-list">
+        {% for app in pending %}
+          {% include "mvnp_repo/_application_card.html" with application=app show_actions=True %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="appl-empty">
+        <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p>No pending applications.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ── APPROVED ── -->
+  <div class="appl-tab-content" id="tab-approved">
+    {% if approved %}
+      <div class="appl-list">
+        {% for app in approved %}
+          {% include "mvnp_repo/_application_card.html" with application=app show_actions=False %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="appl-empty"><p>No approved applications yet.</p></div>
+    {% endif %}
+  </div>
+
+  <!-- ── DECLINED ── -->
+  <div class="appl-tab-content" id="tab-declined">
+    {% if declined %}
+      <div class="appl-list">
+        {% for app in declined %}
+          {% include "mvnp_repo/_application_card.html" with application=app show_actions=False %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="appl-empty"><p>No declined applications yet.</p></div>
+    {% endif %}
+  </div>
+
+  <!-- ── ALL ── -->
+  <div class="appl-tab-content" id="tab-all">
+    {% if applications %}
+      <div class="appl-list">
+        {% for app in applications %}
+          {% if app.status == 'Pending' %}
+            {% include "mvnp_repo/_application_card.html" with application=app show_actions=True %}
+          {% else %}
+            {% include "mvnp_repo/_application_card.html" with application=app show_actions=False %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="appl-empty"><p>No applications have been submitted yet.</p></div>
+    {% endif %}
+  </div>
+
+</div><!-- /appl-shell -->
+
+<style>
+.appl-shell {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.appl-header {
+  margin-bottom: 1.5rem;
+}
+.appl-header h1 { margin-bottom: .25rem; }
+
+/* Summary row */
+.appl-summary {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+.appl-stat {
+  flex: 1 1 120px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.appl-stat__num {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.appl-stat__label {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.appl-stat--pending  .appl-stat__num { color: #a16207; }
+.appl-stat--approved .appl-stat__num { color: #047857; }
+.appl-stat--declined .appl-stat__num { color: #b91c1c; }
+
+/* Tabs */
+.appl-tabs {
+  display: flex;
+  gap: .25rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.appl-tab {
+  background: none;
+  border: none;
+  padding: .75rem 1rem;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: color .15s, border-color .15s;
+}
+.appl-tab:hover { color: var(--primary); }
+.appl-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.appl-tab-badge {
+  background: #fef3c7;
+  color: #92400e;
+  font-size: .72rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: .1rem .45rem;
+  line-height: 1.4;
+}
+
+/* Tab content */
+.appl-tab-content { display: none; }
+.appl-tab-content.active { display: block; }
+
+/* Card list */
+.appl-list { display: grid; gap: 1rem; }
+
+/* Application card */
+.appl-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.appl-card__top {
+  padding: 1.25rem 1.25rem .75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.appl-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: .3rem;
+  color: var(--text);
+}
+.appl-card__sub {
+  font-size: .875rem;
+  color: var(--muted);
+  margin-bottom: .15rem;
+}
+.appl-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .3rem .75rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.appl-badge--pending  { background: #fff7db; color: #a16207; }
+.appl-badge--approved { background: #ecfdf5; color: #047857; }
+.appl-badge--declined { background: #fef2f2; color: #b91c1c; }
+
+/* Expand/collapse detail */
+.appl-card__toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border);
+  padding: .6rem 1.25rem;
+  text-align: left;
+  font-size: .82rem;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  transition: background .15s, color .15s;
+}
+.appl-card__toggle:hover { background: var(--bg); color: var(--primary); }
+.appl-card__toggle svg { transition: transform .2s; flex-shrink: 0; }
+.appl-card__toggle.open svg { transform: rotate(180deg); }
+
+.appl-card__detail {
+  display: none;
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.appl-card__detail.open { display: block; }
+
+.appl-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: .75rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.appl-detail-item span {
+  display: block;
+  font-size: .78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .2rem;
+}
+.appl-detail-item strong {
+  font-size: .9rem;
+  color: var(--text);
+}
+.appl-detail-text {
+  font-size: .875rem;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: .75rem;
+}
+.appl-detail-text span {
+  display: block;
+  font-size: .78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .3rem;
+}
+
+/* Actions */
+.appl-card__actions {
+  padding: .85rem 1.25rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.appl-reviewed {
+  font-size: .85rem;
+  color: var(--muted);
+  padding: .5rem 0;
+}
+
+/* Empty state */
+.appl-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+.appl-empty svg { margin: 0 auto 1rem; display: block; color: #9ca3af; }
+.appl-empty p { font-size: .95rem; }
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Tab switching ──
+  document.querySelectorAll('.appl-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.appl-tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.appl-tab-content').forEach(function (c) { c.classList.remove('active'); });
+      tab.classList.add('active');
+      var target = document.getElementById(tab.getAttribute('data-tab'));
+      if (target) target.classList.add('active');
+    });
+  });
+
+  // ── Card detail expand/collapse ──
+  document.querySelectorAll('.appl-card__toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var detail = btn.closest('.appl-card').querySelector('.appl-card__detail');
+      var isOpen = detail.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.querySelector('.appl-toggle-label').textContent = isOpen ? 'Hide details' : 'View full details';
+    });
+  });
+
+});
+</script>
+{% endblock %}
+
+{% endblock %}

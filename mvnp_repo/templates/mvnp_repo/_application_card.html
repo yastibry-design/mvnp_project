@@ -1,0 +1,109 @@
+<div class="appl-card">
+
+  <!-- Top row: title + badge -->
+  <div class="appl-card__top">
+    <div>
+      <div class="appl-card__title">{{ application.study_title }}</div>
+      <div class="appl-card__sub">{{ application.applicant_name }} &mdash; {{ application.institution|default:"No institution" }}</div>
+      <div class="appl-card__sub">{{ application.applicant_email }}{% if application.phone %} &middot; {{ application.phone }}{% endif %}</div>
+      <div class="appl-card__sub" style="margin-top:.4rem; font-size:.8rem;">
+        Submitted {{ application.submitted_at|date:"M d, Y \a\t H:i" }}
+      </div>
+    </div>
+    <span class="appl-badge appl-badge--{{ application.status|lower }}">
+      {{ application.get_status_display }}
+    </span>
+  </div>
+
+  <!-- Expand toggle -->
+  <button class="appl-card__toggle" type="button">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    <span class="appl-toggle-label">View full details</span>
+  </button>
+
+  <!-- Collapsible detail -->
+  <div class="appl-card__detail">
+
+    <div class="appl-detail-grid">
+      <div class="appl-detail-item">
+        <span>Position</span>
+        <strong>{{ application.position|default:"—" }}</strong>
+      </div>
+      <div class="appl-detail-item">
+        <span>Research Category</span>
+        <strong>{{ application.research_category|default:"—" }}</strong>
+      </div>
+      <div class="appl-detail-item">
+        <span>Research Location</span>
+        <strong>{{ application.research_location|default:"—" }}</strong>
+      </div>
+      <div class="appl-detail-item">
+        <span>Proposed Start</span>
+        <strong>{{ application.proposed_start_date|date:"M d, Y"|default:"—" }}</strong>
+      </div>
+      <div class="appl-detail-item">
+        <span>Proposed End</span>
+        <strong>{{ application.proposed_end_date|date:"M d, Y"|default:"—" }}</strong>
+      </div>
+      <div class="appl-detail-item">
+        <span>Funding Source</span>
+        <strong>{{ application.funding_source|default:"—" }}</strong>
+      </div>
+      {% if application.reviewer %}
+      <div class="appl-detail-item">
+        <span>Reviewed By</span>
+        <strong>{{ application.reviewer.get_full_name|default:application.reviewer.username }}</strong>
+      </div>
+      <div class="appl-detail-item">
+        <span>Reviewed At</span>
+        <strong>{{ application.reviewed_at|date:"M d, Y H:i"|default:"—" }}</strong>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if application.objectives %}
+    <div class="appl-detail-text">
+      <span>Objectives</span>
+      {{ application.objectives }}
+    </div>
+    {% endif %}
+
+    {% if application.summary %}
+    <div class="appl-detail-text">
+      <span>Summary</span>
+      {{ application.summary }}
+    </div>
+    {% endif %}
+
+    {% if application.supporting_documents %}
+    <a href="{{ application.document_url }}" target="_blank" class="btn btn-secondary btn-sm" style="margin-top:.25rem;">
+      View Supporting Document
+    </a>
+    {% endif %}
+
+  </div><!-- /detail -->
+
+  <!-- Action row -->
+  <div class="appl-card__actions">
+    {% if show_actions %}
+      <form method="post" action="{% url 'application_review' application.id 'approve' %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+      </form>
+      <form method="post" action="{% url 'application_review' application.id 'reject' %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+      </form>
+    {% else %}
+      <span class="appl-reviewed">
+        {% if application.reviewer %}
+          Reviewed by {{ application.reviewer.get_full_name|default:application.reviewer.username }}
+          on {{ application.reviewed_at|date:"M d, Y" }}
+        {% else %}
+          Review complete
+        {% endif %}
+      </span>
+    {% endif %}
+  </div>
+
+</div>

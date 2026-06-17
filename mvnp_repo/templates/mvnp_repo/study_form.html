@@ -1,0 +1,310 @@
+{% extends "mvnp_repo/base.html" %}
+
+{% block title %}{{ page_title }} — MVNP Repository{% endblock %}
+
+{% block extra_head %}
+<style>
+  .study-form-card {
+    position: relative;
+    overflow: hidden;
+    max-width: 860px;
+    padding: 4.5rem 2.5rem 2rem;
+    border-radius: 14px;
+    box-shadow: 0 16px 35px rgba(31, 41, 51, .08);
+  }
+
+  .study-form-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 52px;
+    background: var(--primary);
+  }
+
+  .study-form-card .auth-card__header {
+    display: block;
+    margin-bottom: 1.75rem;
+    text-align: center;
+  }
+
+  .study-form-card h1 {
+    position: static;
+    display: block;
+    transform: none;
+    padding-top: 0;
+    margin-bottom: .4rem;
+    color: #102033;
+    text-align: center;
+  }
+
+  .study-form-card h1::before {
+    display: none;
+  }
+
+  .study-form-card .auth-card__subtitle {
+    max-width: none;
+    margin-bottom: 0;
+    font-size: .95rem;
+  }
+
+  .study-form-card .auth-form {
+    gap: 1rem;
+  }
+
+  .study-form-card .form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .study-form-card .auth-form label {
+    font-size: .86rem;
+    font-weight: 600;
+    color: #1f2933;
+  }
+
+  .study-form-card .auth-form input,
+  .study-form-card .auth-form select,
+  .study-form-card .auth-form textarea {
+    min-height: 44px;
+    padding: .72rem .9rem;
+    border-radius: 10px;
+    font-size: .95rem;
+  }
+
+  .study-form-card .auth-form textarea {
+    min-height: 150px;
+  }
+
+  .study-form-card .featured-field {
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    align-self: end;
+    min-height: 44px;
+    margin-top: 1.55rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .study-form-card .featured-field input {
+    width: 18px;
+    height: 18px;
+    min-height: 18px;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  .study-form-card .file-field {
+    padding: .95rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f8faf9;
+  }
+
+  .study-form-card .file-field a {
+    font-weight: 600;
+  }
+
+  .study-form-card .file-current {
+    margin-bottom: .75rem;
+  }
+
+  .study-form-card .file-clear-row {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .study-form-card .file-clear-row input {
+    width: 18px;
+    height: 18px;
+    min-height: 18px;
+    margin: 0;
+    padding: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+
+  .study-form-card .file-change-label {
+    display: block;
+    margin-bottom: .4rem;
+    font-weight: 600;
+  }
+
+  .study-form-card .file-field > input:not([type="checkbox"]),
+  .study-form-card .file-field input[type="file"] {
+    display: block;
+    width: 100%;
+    margin-top: .55rem;
+    background: white;
+  }
+
+  .study-form-card .form-actions {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    margin-top: .25rem;
+  }
+
+  @media (max-width: 680px) {
+    .study-form-card {
+      padding: 4rem 1.25rem 1.5rem;
+      margin: 1rem auto;
+    }
+
+    .study-form-card .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .study-form-card .featured-field {
+      align-self: start;
+      margin-top: 0;
+    }
+
+    .study-form-card .form-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-card auth-card--wide study-form-card">
+  <div class="auth-card__header">
+    <div>
+      <h1>{{ page_title }}</h1>
+      <p class="auth-card__subtitle">
+        Add or update research entries with full metadata and PDF attachment.
+      </p>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="auth-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-row">
+      <label for="{{ form.study_id.id_for_label }}">
+        {{ form.study_id.label }}
+        {{ form.study_id }}
+        {% if form.study_id.errors %}
+          <div class="form-errors">{{ form.study_id.errors }}</div>
+        {% endif %}
+      </label>
+
+      <label for="{{ form.year.id_for_label }}">
+        {{ form.year.label }}
+        {{ form.year }}
+        {% if form.year.errors %}
+          <div class="form-errors">{{ form.year.errors }}</div>
+        {% endif %}
+      </label>
+    </div>
+
+    <label for="{{ form.title.id_for_label }}">
+      {{ form.title.label }}
+      {{ form.title }}
+      {% if form.title.errors %}
+        <div class="form-errors">{{ form.title.errors }}</div>
+      {% endif %}
+    </label>
+
+    <label for="{{ form.authors.id_for_label }}">
+      {{ form.authors.label }}
+      {{ form.authors }}
+      {% if form.authors.errors %}
+        <div class="form-errors">{{ form.authors.errors }}</div>
+      {% endif %}
+    </label>
+
+    <div class="form-row">
+      <label for="{{ form.category.id_for_label }}">
+        {{ form.category.label }}
+        {{ form.category }}
+        {% if form.category.errors %}
+          <div class="form-errors">{{ form.category.errors }}</div>
+        {% endif %}
+      </label>
+
+      <label for="{{ form.study_type.id_for_label }}">
+        {{ form.study_type.label }}
+        {{ form.study_type }}
+        {% if form.study_type.errors %}
+          <div class="form-errors">{{ form.study_type.errors }}</div>
+        {% endif %}
+      </label>
+    </div>
+
+    <div class="form-row">
+      <label for="{{ form.status.id_for_label }}">
+        {{ form.status.label }}
+        {{ form.status }}
+        {% if form.status.errors %}
+          <div class="form-errors">{{ form.status.errors }}</div>
+        {% endif %}
+      </label>
+
+      <label class="featured-field" for="{{ form.featured.id_for_label }}">
+        <input type="checkbox"
+               name="featured"
+               id="{{ form.featured.id_for_label }}"
+               {% if form.featured.value %}checked{% endif %}>
+        <span>Add to Featured</span>
+        {% if form.featured.errors %}
+          <div class="form-errors">{{ form.featured.errors }}</div>
+        {% endif %}
+      </label>
+    </div>
+
+    <label for="{{ form.abstract.id_for_label }}">
+      {{ form.abstract.label }}
+      {{ form.abstract }}
+      {% if form.abstract.errors %}
+        <div class="form-errors">{{ form.abstract.errors }}</div>
+      {% endif %}
+    </label>
+
+    <div class="file-field">
+      {% with current_pdf=form.pdf_file.value %}
+      {% if current_pdf %}
+        <div class="file-current">
+          {{ form.pdf_file.label }} Currently:
+          <a href="{{ current_pdf.url }}" target="_blank">{{ current_pdf.public_id }}</a>
+        </div>
+
+        <label class="file-clear-row" for="{{ form.pdf_file.id_for_label }}-clear">
+          <span>Clear</span>
+          <input type="checkbox"
+                 name="{{ form.pdf_file.html_name }}-clear"
+                 id="{{ form.pdf_file.id_for_label }}-clear">
+        </label>
+
+        <span class="file-change-label">Change:</span>
+      {% else %}
+        <span class="file-change-label">{{ form.pdf_file.label }}</span>
+      {% endif %}
+      {% endwith %}
+
+      <input type="file"
+             name="{{ form.pdf_file.html_name }}"
+             id="{{ form.pdf_file.id_for_label }}">
+      {% if form.pdf_file.errors %}
+        <div class="form-errors">{{ form.pdf_file.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
+      <a href="{% if study %}{% url 'viewer' study.study_id %}{% else %}{% url 'repository' %}{% endif %}" class="btn btn-secondary btn-sm">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

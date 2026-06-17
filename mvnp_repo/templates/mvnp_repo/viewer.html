@@ -1,0 +1,60 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}{{ study.title }} — MVNP Repository{% endblock %}
+
+{% block content %}
+
+<div class="viewer-header">
+  <h1>{{ study.title }}</h1>
+  <p style="color:var(--muted);">{{ study.authors }}</p>
+
+  <div class="viewer-meta">
+    <span>Year: {{ study.year }}</span>
+    <span>Type: {{ study.study_type }}</span>
+    <span>{{ study.status }}</span>
+    {% if study.category %}<span class="tag">{{ study.category.name }}</span>{% endif %}
+  </div>
+
+  {% if study.abstract %}
+  <p style="margin-top:.75rem;color:var(--muted);">{{ study.abstract }}</p>
+  {% endif %}
+
+  {% if study.keywords.exists %}
+  <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.4rem;">
+    {% for kw in study.keywords.all %}
+    <span class="tag">{{ kw.word }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="viewer-actions">
+    {% if study.pdf_file %}
+    <a class="btn btn-primary btn-action" href="{% url 'pdf_proxy' study.study_id %}" target="_blank">Download PDF</a>
+    {% endif %}
+    {% if user.is_staff %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'study_edit' study.study_id %}">Edit</a>
+    {% endif %}
+    <a class="btn btn-secondary btn-action" href="{% url 'repository' %}">Back to Repository</a>
+  </div>
+</div>
+
+{% if study.pdf_file %}
+<div class="pdf-container">
+  <iframe
+    id="pdfFrame"
+    src="{% url 'pdf_proxy' study.study_id %}"
+    title="PDF Viewer"
+  >
+    <p style="text-align:center;padding:2rem;color:var(--muted);">
+      Your browser does not support inline PDF viewing.
+      <a href="{% url 'pdf_proxy' study.study_id %}">Click here to download the PDF.</a>
+    </p>
+  </iframe>
+</div>
+{% else %}
+<div class="content-card" style="text-align:center;color:var(--muted);padding:2rem;">
+  <p>No PDF file is currently attached to this study.</p>
+  <p style="margin-top:.5rem;font-size:.85rem;">Contact the PAMO to request access.</p>
+</div>
+{% endif %}
+
+{% endblock %}

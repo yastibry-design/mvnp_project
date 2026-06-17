@@ -1,0 +1,705 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}Research Application — MVNP Repository{% endblock %}
+
+{% block content %}
+<style>
+  .app-wrap {
+    max-width: 760px;
+    margin: 2.5rem auto;
+    padding: 0 1rem 4rem;
+    font-family: inherit;
+  }
+
+  .app-header {
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 0;
+  }
+
+  .app-header h1 {
+    margin: 0 0 .3rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .app-header p {
+    margin: 0;
+    font-size: .92rem;
+    opacity: .88;
+  }
+
+  .section-block {
+    background: #fff;
+    border: 1px solid #dde3e9;
+    border-radius: 10px;
+    margin-top: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+
+  .section-block__title {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: .95rem;
+    padding: .8rem 1.4rem;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+  }
+
+  .section-block__body {
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .field-card {
+    background: #fff;
+    border: 1px solid #dde3e9;
+    border-radius: 8px;
+    padding: 1rem 1.2rem 1.1rem;
+  }
+
+  .field-card label {
+    display: block;
+    font-weight: 600;
+    font-size: .93rem;
+    margin-bottom: .55rem;
+    color: #1a1a2e;
+  }
+
+  .field-card label .req {
+    color: #c0392b;
+    margin-left: 2px;
+  }
+
+  .field-card input[type="text"],
+  .field-card input[type="email"],
+  .field-card input[type="date"],
+  .field-card input[type="tel"],
+  .field-card textarea,
+  .field-card select {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #aaa;
+    border-radius: 0;
+    padding: .35rem 0;
+    font-size: .95rem;
+    background: transparent;
+    outline: none;
+    color: #222;
+    transition: border-color .2s;
+    box-sizing: border-box;
+  }
+
+  .field-card input:focus,
+  .field-card textarea:focus,
+  .field-card select:focus {
+    border-bottom-color: var(--primary);
+  }
+
+  .field-card textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+
+  .field-card .hint {
+    font-size: .8rem;
+    color: #777;
+    margin-top: .3rem;
+  }
+
+  .radio-group,
+  .check-group {
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+    margin-top: .2rem;
+  }
+
+  .radio-group label,
+  .check-group label {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: .93rem;
+  }
+
+  .radio-group input[type="radio"],
+  .check-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+    border-bottom: none !important;
+  }
+
+  .permits-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .92rem;
+  }
+
+  .permits-table th {
+    font-weight: 600;
+    text-align: center;
+    padding: .4rem .6rem;
+    color: #444;
+    width: 100px;
+  }
+
+  .permits-table th:first-child {
+    text-align: left;
+    width: auto;
+  }
+
+  .permits-table td {
+    padding: .55rem .6rem;
+    border-top: 1px solid #eee;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .permits-table td:first-child {
+    text-align: left;
+    font-size: .9rem;
+    color: #333;
+  }
+
+  .permits-table input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    border-bottom: none !important;
+  }
+
+  .ack-label {
+    display: flex;
+    align-items: flex-start;
+    gap: .8rem;
+    font-weight: 400 !important;
+    font-size: .92rem;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .ack-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+    border-bottom: none !important;
+  }
+
+  .upload-area {
+    border: 2px dashed #bbb;
+    border-radius: 8px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s;
+    position: relative;
+  }
+
+  .upload-area:hover { border-color: var(--primary); }
+
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border-bottom: none !important;
+  }
+
+  .upload-area .upload-icon {
+    font-size: 1.5rem;
+    margin-bottom: .4rem;
+  }
+
+  .upload-area p {
+    margin: 0;
+    font-size: .88rem;
+    color: #555;
+  }
+
+  .upload-area .upload-btn {
+    display: inline-block;
+    margin-top: .6rem;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: .35rem .9rem;
+    border-radius: 5px;
+    font-size: .88rem;
+    font-weight: 600;
+    background: #fff;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.8rem;
+    justify-content: flex-end;
+  }
+
+  .form-errors {
+    color: #c0392b;
+    font-size: .82rem;
+    margin-top: .3rem;
+  }
+
+  /* Team Member dynamic styles */
+  .team-member-group {
+    border: 1px solid #dde3e9;
+    border-radius: 8px;
+    padding: 1rem 1.2rem 1.2rem;
+    background: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+  }
+
+  .team-member-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .2rem;
+  }
+
+  .team-member-label {
+    font-weight: 700;
+    font-size: .88rem;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  .btn-remove-member {
+    background: none;
+    border: 1px solid #e0b0b0;
+    color: #c0392b;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: .25rem .7rem;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    transition: background .15s, color .15s;
+  }
+
+  .btn-remove-member:hover {
+    background: #fdf0f0;
+    border-color: #c0392b;
+  }
+
+  .team-member-group .field-card {
+    background: #fff;
+  }
+
+  .add-member-row {
+    padding: 1rem 1.4rem 1.2rem;
+    border-top: 1px solid #eef0f2;
+    margin-top: .2rem;
+  }
+
+  .btn-add-member {
+    background: #fff;
+    border: 1.5px dashed var(--primary);
+    color: var(--primary);
+    font-size: .9rem;
+    font-weight: 600;
+    padding: .55rem 1.2rem;
+    border-radius: 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    transition: background .15s, box-shadow .15s;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-add-member:hover {
+    background: #f0f7f2;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 580px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="app-wrap">
+  <div class="app-header">
+    <h1>Research Permit Application</h1>
+    <p>Mahagnao Volcano Natural Park — Official Research Application Form</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- SECTION A -->
+    <div class="section-block">
+      <div class="section-block__title">Section A. General Information</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Title of Research Proposal <span class="req">*</span></label>
+          <input type="text" name="study_title" value="{{ form.study_title.value|default:'' }}" required placeholder="Your answer">
+          {% if form.study_title.errors %}<div class="form-errors">{{ form.study_title.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Type of Research <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="research_type" value="Non-invasive"> Non-invasive</label>
+            <label><input type="radio" name="research_type" value="Sampling-based"> Sampling-based</label>
+            <label><input type="radio" name="research_type" value="Commercial/ High-impact"> Commercial/ High-impact</label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PROPOSED DURATION -->
+    <div class="section-block">
+      <div class="section-block__title">Proposed Duration</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Start Date <span class="req">*</span></label>
+          <p class="hint">Date</p>
+          <input type="date" name="proposed_start_date" value="{{ form.proposed_start_date.value|default:'' }}" required>
+          {% if form.proposed_start_date.errors %}<div class="form-errors">{{ form.proposed_start_date.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>End Date <span class="req">*</span></label>
+          <p class="hint">Date</p>
+          <input type="date" name="proposed_end_date" value="{{ form.proposed_end_date.value|default:'' }}" required>
+          {% if form.proposed_end_date.errors %}<div class="form-errors">{{ form.proposed_end_date.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Purpose of the Study <span class="req">*</span></label>
+          <textarea name="objectives" required placeholder="Your answer">{{ form.objectives.value|default:'' }}</textarea>
+          {% if form.objectives.errors %}<div class="form-errors">{{ form.objectives.errors }}</div>{% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION B -->
+    <div class="section-block">
+      <div class="section-block__title">Section B. Principal Researcher Information</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Full Name <em style="font-weight:400">(Surname, First Name Middle Initial)</em> <span class="req">*</span></label>
+          <input type="text" name="applicant_name" value="{{ form.applicant_name.value|default:'' }}" required placeholder="Your answer">
+          {% if form.applicant_name.errors %}<div class="form-errors">{{ form.applicant_name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Position/ Designation <span class="req">*</span></label>
+          <input type="text" name="position" value="{{ form.position.value|default:'' }}" required placeholder="Your answer">
+          {% if form.position.errors %}<div class="form-errors">{{ form.position.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Institution/ Organization <span class="req">*</span></label>
+          <input type="text" name="institution" value="{{ form.institution.value|default:'' }}" required placeholder="Your answer">
+          {% if form.institution.errors %}<div class="form-errors">{{ form.institution.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Address <span class="req">*</span></label>
+          <input type="text" name="research_location" value="{{ form.research_location.value|default:'' }}" required placeholder="Your answer">
+          {% if form.research_location.errors %}<div class="form-errors">{{ form.research_location.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Contact Number <span class="req">*</span></label>
+          <input type="tel" name="phone" value="{{ form.phone.value|default:'' }}" required placeholder="Your answer">
+          {% if form.phone.errors %}<div class="form-errors">{{ form.phone.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" name="applicant_email" value="{{ form.applicant_email.value|default:'' }}" required placeholder="Your answer">
+          {% if form.applicant_email.errors %}<div class="form-errors">{{ form.applicant_email.errors }}</div>{% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION C -->
+    <div class="section-block">
+      <div class="section-block__title">Section C. Research Team Members</div>
+      <div class="section-block__body" id="team-members-container">
+
+        <!-- Team Member #1 (default) -->
+        <div class="team-member-group" data-index="1">
+          <div class="team-member-header">
+            <span class="team-member-label">Member #1</span>
+          </div>
+
+          <div class="field-card">
+            <label>Full Name <em style="font-weight:400">(Surname, First Name Middle Initial)</em> <span class="req">*</span></label>
+            <input type="text" name="team_member_name[]" placeholder="Your answer">
+          </div>
+
+          <div class="field-card">
+            <label>Position/ Designation <span class="req">*</span></label>
+            <input type="text" name="team_member_position[]" placeholder="Your answer">
+          </div>
+
+          <div class="field-card">
+            <label>Institution/ Organization <span class="req">*</span></label>
+            <input type="text" name="team_member_institution[]" placeholder="Your answer">
+          </div>
+
+          <div class="field-card">
+            <label>Address <span class="req">*</span></label>
+            <input type="text" name="team_member_address[]" placeholder="Your answer">
+          </div>
+
+          <div class="field-card">
+            <label>Contact Number <span class="req">*</span></label>
+            <input type="tel" name="team_member_phone[]" placeholder="Your answer">
+          </div>
+
+          <div class="field-card">
+            <label>Email Address <span class="req">*</span></label>
+            <input type="email" name="team_member_email[]" placeholder="Your answer">
+          </div>
+        </div>
+
+      </div>
+
+      <div class="add-member-row">
+        <button type="button" class="btn-add-member" id="add-team-member-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Team Member
+        </button>
+      </div>
+    </div>
+
+    <!-- SECTION D -->
+    <div class="section-block">
+      <div class="section-block__title">Section D. Site and Methodology</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Is the proposed study site within MVNP? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="site_within_mvnp" value="Yes"> Yes</label>
+            <label><input type="radio" name="site_within_mvnp" value="No"> No</label>
+            <label>
+              <input type="radio" name="site_within_mvnp" value="Other">
+              Other: <input type="text" name="site_within_mvnp_other" style="border-bottom:1px solid #aaa; width:160px; margin-left:.4rem; font-size:.9rem;">
+            </label>
+          </div>
+        </div>
+
+        <div class="field-card">
+          <label>Methodology Overview <span class="req">*</span></label>
+          <textarea name="summary" required placeholder="Your answer">{{ form.summary.value|default:'' }}</textarea>
+          {% if form.summary.errors %}<div class="form-errors">{{ form.summary.errors }}</div>{% endif %}
+        </div>
+
+        <div class="field-card">
+          <label>Expected Outputs <span class="req">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="expected_outputs" value="Technical Report"> Technical Report</label>
+            <label><input type="radio" name="expected_outputs" value="Datasets/ GIS Layers"> Datasets/ GIS Layers</label>
+            <label><input type="radio" name="expected_outputs" value="Publication(s)"> Publication(s)</label>
+            <label><input type="radio" name="expected_outputs" value="Maps"> Maps</label>
+            <label>
+              <input type="radio" name="expected_outputs" value="Other">
+              Other: <input type="text" name="expected_outputs_other" style="border-bottom:1px solid #aaa; width:160px; margin-left:.4rem; font-size:.9rem;">
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION E -->
+    <div class="section-block">
+      <div class="section-block__title">Section E. Permits and Endorsements</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Permits and Endorsements <span class="req">*</span></label>
+          <table class="permits-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Yes</th>
+                <th>No</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Institutional Endorsement Letter (if applicable)</td>
+                <td><input type="radio" name="permit_endorsement_letter" value="Yes"></td>
+                <td><input type="radio" name="permit_endorsement_letter" value="No"></td>
+              </tr>
+              <tr>
+                <td>Wildlife Gratuitous Permit (if applicable)</td>
+                <td><input type="radio" name="permit_wildlife" value="Yes"></td>
+                <td><input type="radio" name="permit_wildlife" value="No"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="field-card">
+          <label>Date per Permit</label>
+          <input type="text" name="funding_source" value="{{ form.funding_source.value|default:'' }}" placeholder="Your answer">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION F -->
+    <div class="section-block">
+      <div class="section-block__title">Section F. Researcher Acknowledgement</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Researcher Acknowledgment Statement <span class="req">*</span></label>
+          <label class="ack-label">
+            <input type="checkbox" name="acknowledgement" required>
+            I certify that the information provided in this form is true and correct. I understand that any false information or failure to comply with the Protected Area (PA) guidelines may lead to revocation of clearance or other applicable sanctions.
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="section-block">
+      <div class="section-block__title">Upload Research Proposal Document</div>
+      <div class="section-block__body">
+
+        <div class="field-card">
+          <label>Please upload your research proposal. <span class="req">*</span></label>
+          <p class="hint">Upload 1 supported file: PDF or document. Max 100 MB.</p>
+          <div class="upload-area" id="upload-area">
+            <input type="file" name="supporting_documents" accept=".pdf,.doc,.docx" id="file-input">
+            <div class="upload-icon">⬆</div>
+            <p id="file-label">Drag and drop or click to select a file</p>
+            <span class="upload-btn">Add file</span>
+          </div>
+          {% if form.supporting_documents.errors %}<div class="form-errors">{{ form.supporting_documents.errors }}</div>{% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a class="btn btn-secondary" href="{% url 'home' %}">Back</a>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // File upload label
+  const input = document.getElementById('file-input');
+  const label = document.getElementById('file-label');
+  input.addEventListener('change', () => {
+    label.textContent = input.files.length ? input.files[0].name : 'Drag and drop or click to select a file';
+  });
+
+  // Dynamic Team Members
+  let memberCount = 1;
+
+  function createMemberGroup(index) {
+    const group = document.createElement('div');
+    group.className = 'team-member-group';
+    group.dataset.index = index;
+    group.innerHTML = `
+      <div class="team-member-header">
+        <span class="team-member-label">Member #${index}</span>
+        <button type="button" class="btn-remove-member" onclick="removeMember(this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Remove
+        </button>
+      </div>
+      <div class="field-card">
+        <label>Full Name <em style="font-weight:400">(Surname, First Name Middle Initial)</em> <span class="req">*</span></label>
+        <input type="text" name="team_member_name[]" placeholder="Your answer">
+      </div>
+      <div class="field-card">
+        <label>Position/ Designation <span class="req">*</span></label>
+        <input type="text" name="team_member_position[]" placeholder="Your answer">
+      </div>
+      <div class="field-card">
+        <label>Institution/ Organization <span class="req">*</span></label>
+        <input type="text" name="team_member_institution[]" placeholder="Your answer">
+      </div>
+      <div class="field-card">
+        <label>Address <span class="req">*</span></label>
+        <input type="text" name="team_member_address[]" placeholder="Your answer">
+      </div>
+      <div class="field-card">
+        <label>Contact Number <span class="req">*</span></label>
+        <input type="tel" name="team_member_phone[]" placeholder="Your answer">
+      </div>
+      <div class="field-card">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" name="team_member_email[]" placeholder="Your answer">
+      </div>
+    `;
+    return group;
+  }
+
+  function renumberMembers() {
+    const groups = document.querySelectorAll('#team-members-container .team-member-group');
+    groups.forEach((group, i) => {
+      const lbl = group.querySelector('.team-member-label');
+      if (lbl) lbl.textContent = `Member #${i + 1}`;
+      // Show remove button only if more than 1 member
+      const removeBtn = group.querySelector('.btn-remove-member');
+      if (removeBtn) removeBtn.style.display = groups.length > 1 ? 'inline-flex' : 'none';
+    });
+  }
+
+  function removeMember(btn) {
+    const group = btn.closest('.team-member-group');
+    group.remove();
+    renumberMembers();
+  }
+
+  document.getElementById('add-team-member-btn').addEventListener('click', () => {
+    memberCount++;
+    const container = document.getElementById('team-members-container');
+    container.appendChild(createMemberGroup(memberCount));
+    renumberMembers();
+  });
+
+  // Init: hide remove button on first member since there's only one
+  renumberMembers();
+</script>
+
+{% endblock %}

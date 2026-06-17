@@ -1,0 +1,24 @@
+{% extends "mvnp_repo/base.html" %}
+
+{% block title %}Delete Study — MVNP Repository{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <h1>Delete Research Study</h1>
+  <p style="color:var(--muted);">
+    You are about to permanently remove this study from the repository.
+  </p>
+
+  <div class="content-card" style="margin-bottom:1.5rem;">
+    <h2>{{ study.title }}</h2>
+    <p>{{ study.authors }} — {{ study.year }}</p>
+    <p><strong>Study ID:</strong> {{ study.study_id }}</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Yes, delete this study</button>
+    <a href="{% url 'viewer' study.study_id %}" class="btn btn-secondary" style="margin-left:.75rem;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

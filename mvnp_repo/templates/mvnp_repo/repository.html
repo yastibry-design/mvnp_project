@@ -1,0 +1,129 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}Research Repository — MVNP{% endblock %}
+{% block nav_repo %}active{% endblock %}
+
+{% block content %}
+
+<div class="repository-shell">
+  <div class="repository-intro">
+  <div>
+    <h1 class="page-title">Research Repository</h1>
+    <p class="page-subtitle">
+      Browse Scientific Studies, Technical Reports, Thesis, and Publications conducted within
+      Mahagnao Volcano Natural Park.
+      {% if total %}<strong>{{ total }} result{{ total|pluralize }} found.</strong>{% endif %}
+    </p>
+  </div>
+</div>
+
+<!-- Filters -->
+<form method="get" class="filters" id="filterForm">
+  <input
+    id="search-input"
+    type="text"
+    name="q"
+    value="{{ q }}"
+    placeholder="Search title, author, year, keyword..."
+    autocomplete="off"
+    style="flex:2 1 200px;min-width:160px;">
+
+  <select name="type" onchange="this.form.submit()" style="min-width:130px;max-width:180px;flex:1 1 130px;">
+    <option value="">All Types</option>
+    {% for val, label in type_choices %}
+    <option value="{{ val }}" {% if ftype == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="status" onchange="this.form.submit()" style="min-width:160px;max-width:220px;flex:1 1 160px;">
+    <option value="">All Status</option>
+    {% for val, label in status_choices %}
+    <option value="{{ val }}" {% if fstat == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="category" onchange="this.form.submit()" style="min-width:180px;max-width:260px;flex:1 1 180px;">
+    <option value="">All Categories</option>
+    {% for cat in categories %}
+    <option value="{{ cat.name }}" {% if fcat == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit" class="btn btn-primary" style="padding:.7rem 1.2rem;">Search</button>
+  {% if q or ftype or fstat or fcat %}
+  <a href="{% url 'repository' %}" class="btn btn-secondary" style="padding:.7rem 1rem;">Clear</a>
+  {% endif %}
+</form>
+
+<!-- Table -->
+<div class="table-container repository-table-wrap">
+  <table class="repository-table">
+    <thead>
+      <tr>
+        <th style="width:55px;">Year</th>
+        <th>Title</th>
+        <th>Authors</th>
+        <th style="width:120px;">Type</th>
+        <th style="width:200px;">Category</th>
+        <th>Status</th>
+        <th style="width:80px; white-space:nowrap;">PDF</th>
+        {% if user.is_staff %}<th style="width:80px; white-space:nowrap;">Actions</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for study in studies %}
+      <tr>
+        <td>{{ study.year }}</td>
+        <td>{{ study.title }}</td>
+        <td>{{ study.authors }}</td>
+        <td>
+          <span class="tag" style="display:inline-block; white-space:normal; word-break:normal; line-height:1.4; padding:.25rem .5rem;">
+            {{ study.study_type }}
+          </span>
+        </td>
+        <td>
+          {% if study.category %}
+            <span class="tag" style="display:inline-block; white-space:normal; word-break:normal; line-height:1.4; padding:.25rem .5rem;">
+              {{ study.category.name }}
+            </span>
+          {% else %}—{% endif %}
+        </td>
+        <td>{{ study.status }}</td>
+        <td style="white-space:nowrap;">
+          <a class="btn btn-primary btn-sm" href="{% url 'viewer' study.study_id %}">View</a>
+        </td>
+        {% if user.is_staff %}
+        <td style="white-space:nowrap;">
+          <div class="action-buttons">
+            <a class="btn btn-secondary btn-sm" href="{% url 'study_edit' study.study_id %}">Edit</a>
+          </div>
+        </td>
+        {% endif %}
+      </tr>
+      {% empty %}
+      <tr class="empty-row">
+        <td colspan="8">No studies found matching your search.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+{% if user.is_staff %}
+<div style="display:flex;justify-content:flex-end;margin-top:1.5rem;">
+  <a href="{% url 'study_add' %}" class="btn btn-primary">Add Research</a>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('search-input').addEventListener('keyup', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('filterForm').submit();
+    }
+  });
+</script>
+{% endblock %}

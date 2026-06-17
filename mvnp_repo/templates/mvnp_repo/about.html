@@ -1,0 +1,64 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}About — MVNP Research Repository{% endblock %}
+{% block nav_about %}active{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">About the Repository</h1>
+<p class="page-subtitle">Supporting science-based conservation and protected area management.</p>
+
+<div class="content-card">
+  <h2>Overview</h2>
+  <p>
+    The Mahagnao Volcano Natural Park (MVNP) Research Repository serves as the Official Archive
+    of Research Studies, Technical Reports, Biodiversity Assessments, Academic Thesis, Journal
+    Articles, and other scientific outputs conducted within Mahagnao Volcano Natural Park.
+  </p>
+  <p>
+    The repository provides centralized access to knowledge products that support Biodiversity
+    Conservation, Ecosystem Management, Environmental Policy Development, Research Collaboration,
+    and evidence-based decision-making within the protected area.
+  </p>
+</div>
+
+<div class="content-card">
+  <h2>Objectives</h2>
+  <ul>
+    <li>Preserve scientific knowledge generated within MVNP.</li>
+    <li>Support research transparency and accessibility.</li>
+    <li>Facilitate information sharing among researchers and stakeholders.</li>
+    <li>Strengthen evidence-based conservation planning.</li>
+    <li>Promote scientific collaboration and innovation.</li>
+  </ul>
+</div>
+
+<div class="content-card">  
+  <h2>Research Governance</h2>
+  <p>
+    All research conducted within Mahagnao Volcano Natural Park shall comply with applicable
+    Philippine Laws and DENR Policies, including the Expanded National Integrated Protected Areas
+    System Act (R.A 11038), the Wildlife Resources Conservation and Protection Act (R.A 9147), and
+    relevant DENR administrative issuances.
+  </p>
+  <p>
+    Research proposals are reviewed under the MVNP Research Guidelines and corresponding
+    procedures established by the Protected Area Management Board (PAMB) and Protected Area
+    Management Office (PAMO).
+  </p>
+</div>
+
+<div class="content-card">
+  <h2>Repository Statistics</h2>
+  <div class="cards" style="margin-top:.75rem;">
+    <div class="card">
+      <div class="card-label">Total Studies</div>
+      <div class="card-value">{{ total_studies }}</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Journal Articles</div>
+      <div class="card-value">{{ journal_articles }}</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

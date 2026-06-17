@@ -1,0 +1,78 @@
+{% extends "mvnp_repo/base.html" %}
+
+{% block title %}My Applications — MVNP Research Repository{% endblock %}
+
+{% block content %}
+<div class="auth-card auth-card--wide history-page">
+  <div class="auth-card__header history-header">
+    <div class="history-header__text">
+      <h1>Research History</h1>
+      <p class="auth-card__subtitle">
+        Keep track of every research proposal you submitted.
+      </p>
+    </div>
+    <span class="history-pill">{{ applications|length }} Total Submissions</span>
+  </div>
+
+  <div class="history-summary-grid">
+    <article class="history-summary-card">
+      <span class="history-summary-label">Pending</span>
+      <strong>{{ pending_count }}</strong>
+      <small>Awaiting review</small>
+    </article>
+    <article class="history-summary-card">
+      <span class="history-summary-label">Approved</span>
+      <strong>{{ approved_count }}</strong>
+      <small>Cleared for research</small>
+    </article>
+    <article class="history-summary-card">
+      <span class="history-summary-label">Declined</span>
+      <strong>{{ declined_count }}</strong>
+      <small>Needs revision</small>
+    </article>
+  </div>
+
+  {% if applications %}
+    <div class="history-list">
+      {% for application in applications %}
+        <article class="history-entry">
+          <div class="history-entry__top">
+            <div>
+              <p class="history-entry__eyebrow">Submitted {{ application.submitted_at|date:'M d, Y' }}</p>
+              <h2>{{ application.study_title }}</h2>
+              <p class="history-entry__text">{{ application.summary|default:'No summary provided yet.' }}</p>
+            </div>
+            <span class="history-badge status-{{ application.status|lower }}">{{ application.get_status_display }}</span>
+          </div>
+
+          <div class="history-entry__meta">
+            <div>
+              <span>Research category</span>
+              <strong>{{ application.research_category|default:'Not specified' }}</strong>
+            </div>
+            <div>
+              <span>Location</span>
+              <strong>{{ application.research_location|default:'Not specified' }}</strong>
+            </div>
+            <div>
+              <span>Reviewed by</span>
+              <strong>
+                {% if application.reviewer %}
+                  {{ application.reviewer.get_full_name|default:application.reviewer.username }}
+                {% else %}
+                  Pending assignment
+                {% endif %}
+              </strong>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="content-card empty-history-card">
+      <h2>No research history yet</h2>
+      <p>You have not submitted any research applications yet. Once you submit one, it will appear here with its review progress.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

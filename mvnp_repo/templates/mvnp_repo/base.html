@@ -1,0 +1,1493 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}MVNP Research Repository{% endblock %}</title>
+
+<style>
+/* ── Variables ── */
+:root {
+  --bg:            #f4f7f4;
+  --card:          #ffffff;
+  --primary:       #176b3f;
+  --primary-light: #e0f1e7;
+  --text:          #1f2933;
+  --muted:         #6b7280;
+  --border:        #d1d5db;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ── Header / Nav ── */
+header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav {
+  max-width: min(1440px, 100%);
+  width: 100%;
+  margin: auto;
+  padding: .75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.nav-logos {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.nav-logos img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.nav-title {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.nav-sub {
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  padding: .4rem .8rem;
+  border-radius: 999px;
+  transition: .2s;
+}
+
+.nav-links a:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.nav-links .active {
+  background: var(--primary);
+  color: white !important;
+}
+
+.nav-account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-burger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(31, 41, 51, .08);
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.nav-burger:hover,
+.nav-burger:focus {
+  transform: translateY(-1px);
+  border-color: rgba(23, 107, 63, .35);
+  box-shadow: 0 6px 16px rgba(31, 41, 51, .14);
+  outline: none;
+}
+
+.nav-burger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 999px;
+  margin: 3px 0;
+}
+
+.nav-burger-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.75rem);
+  min-width: 180px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(31, 41, 51, .12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+  z-index: 200;
+}
+
+.nav-burger-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-burger-menu a {
+  display: block;
+  padding: .85rem 1rem;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-burger-menu a:last-child {
+  border-bottom: none;
+}
+
+.nav-burger-menu a:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ── Main Content ── */
+main {
+  max-width: min(1440px, 100%);
+  width: 100%;
+  margin: auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+/* ── Page titles ── */
+.page-title {
+  font-size: 2rem;
+  margin-bottom: .25rem;
+}
+
+.page-subtitle {
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, var(--primary-light), #ffffff);
+  border-radius: 12px;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: .75rem;
+}
+
+.hero p {
+  color: var(--muted);
+}
+
+.hero-buttons {
+  margin-top: 1rem;
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.hero-note {
+  border-left: 4px solid var(--primary);
+  padding-left: 1rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: .55rem .9rem;
+  border-radius: 8px;
+  border: 1px solid var(--primary);
+  transition: .2s;
+  font-size: .9rem;
+  min-width: 90px;
+  white-space: nowrap;
+}
+
+.btn-sm {
+  min-width: 75px;
+  padding: .4rem .75rem;
+  font-size: .85rem;
+  white-space: nowrap;
+  margin-left: 0;
+}
+
+.action-buttons {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.btn-sm + .btn-sm,
+.btn-sm + .btn-action,
+.btn-action + .btn-sm {
+  margin-left: .5rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+ }
+
+.btn-primary:hover { opacity: .9; }
+
+.btn-secondary {
+  color: var(--primary);
+  background: white;
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-danger {
+  color: #b91c1c;
+  border-color: #b91c1c;
+  background: white;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  color: white;
+  border-color: #991b1b;
+}
+
+.btn-action {
+  min-width: 72px;
+  padding: .4rem .75rem;
+  border-radius: 8px;
+  font-size: .85rem;
+  line-height: 1.2;
+}
+
+.btn-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+  padding: .4rem .75rem;
+  border-radius: 8px;
+  font-size: .85rem;
+  min-width: 72px;
+  margin: 0;
+}
+
+.btn-view:hover { opacity: .9; }
+
+/* ── Section titles ── */
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+}
+
+.auth-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 520px;
+  margin: 2rem auto;
+}
+
+.auth-card h1 {
+  margin-bottom: .75rem;
+  color: #112233; /* Dark slate text color from the image */
+  position: relative;
+  padding-top: 15px; /* Creates space between the line and the text */
+  display: inline-block; /* Wraps the element boundary cleanly around the text block */
+  left: 50%;
+  transform: translateX(-50%); /* Centers the inline block title inside the form container */
+  text-align: center;
+}
+
+.auth-card h1::before {
+  content: "";
+  position: absolute;
+  margin-top: -47px; /* Positions the line above the text */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 520px; /* Sets a fixed width for a cleaner look */
+  height: 50px; /* Thickness of the green accent line */
+  background-color: var(--primary); /* Uses your defined green primary variable (#176b3f) */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.auth-card p {
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.auth-card--wide {
+  max-width: 780px;
+  padding: 2rem 2.25rem;
+}
+
+.auth-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card__subtitle {
+  color: var(--muted);
+  max-width: 640px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.auth-form label {
+  display: block;
+  font-size: .95rem;
+  color: var(--text);
+}
+
+.auth-form input,
+.auth-form select,
+.auth-form textarea {
+  width: 100%;
+  padding: .85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-top: .35rem;
+  background: white;
+}
+
+.auth-form textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.auth-form input[type="file"] {
+  padding: .65rem .85rem;
+}
+
+/* 1. Keep the text wrapper in the normal document flow */
+.history-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* 2. Reset the heading so it aligns cleanly in the flex layout */
+.history-page .auth-card__header h1 {
+  position: static;
+  transform: none;
+  text-align: left;
+  padding-top: 0;
+  margin-bottom: 0;
+}
+
+/* 3. Hide the misaligned default green line for this specific page */
+.history-page .auth-card__header h1::before {
+  display: none;
+}
+
+/* 4. Create a clean, full-width green banner fixed to the top of the wide card */
+.history-page.auth-card {
+  position: relative;
+  overflow: hidden; /* Keeps the banner rounded with the card corners */
+  padding-top: 4.5rem; /* Pushes content down to make room for the banner */
+}
+
+.history-page.auth-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensures the banner spans the full width of the wide card */
+  height: 50px; /* Thickness of the banner */
+  background-color: var(--primary);
+}
+
+/* ── Password Show/Hide Toggle ── */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 3rem !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: .75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  transition: color .15s ease;
+}
+
+.password-toggle:hover {
+  color: var(--text);
+}
+
+.eye-icon {
+  display: inline-block;
+  pointer-events: none;
+}
+
+/* Profile panel password wrapper */
+.pf-field .password-wrapper input {
+  padding-right: 3rem !important;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  width: auto;
+  margin-top: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: .5rem;
+}
+
+.auth-form .form-errors,
+.flash,
+.flash.error,
+.flash.danger,
+.flash-error,
+.flash-danger {
+  color: #991b1b;
+  margin-bottom: 1rem;
+}
+
+.flash.success,
+.flash-success {
+  color: #064e3b;
+  margin-bottom: 1rem;
+}
+
+/* ── FLASH NOTIFICATION SYSTEM ── */
+.flash-messages { display:block; }
+.flash {
+  display: inline-block;
+  width: auto;
+  max-width: 95%;
+  margin: 0;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  overflow: hidden;
+  transition: opacity .32s ease, max-height .32s ease, margin .32s ease, padding .32s ease;
+  max-height: 200px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.flash.success,
+.flash-success {
+  background: #d1fae5;
+  border-color: #6ee7b7;
+  color: #064e3b;
+}
+
+.flash.error,
+.flash.danger,
+.flash-error,
+.flash-danger {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+.flash.info {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.flash + .flash {
+  margin-top: .75rem;
+}
+
+/* ── Stat Cards ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.card-label {
+  font-size: .75rem;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.card-sub {
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* ── Content cards ── */
+.content-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.history-page {
+  max-width: 900px;
+}
+
+.history-header {
+  align-items: flex-start;
+}
+
+.history-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: .35rem .65rem;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.history-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.history-summary-card {
+  background: linear-gradient(135deg, #ffffff, #f5faf7);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem 1rem 1.1rem;
+  min-height: 108px;
+  box-shadow: 0 10px 24px rgba(23, 107, 63, .08);
+}
+
+.history-summary-card strong {
+  display: block;
+  font-size: 1.65rem;
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.history-summary-label {
+  display: block;
+  color: var(--muted);
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: .35rem;
+}
+
+.history-summary-card small {
+  color: var(--muted);
+}
+
+.history-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.history-entry {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.25rem;
+  min-height: 170px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+}
+
+.history-entry__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: .9rem;
+}
+
+.history-entry__eyebrow {
+  color: var(--muted);
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: .25rem;
+}
+
+.history-entry h2 {
+  font-size: 1.08rem;
+  margin-bottom: .35rem;
+}
+
+.history-entry__text {
+  color: var(--muted);
+  max-width: 620px;
+}
+
+.history-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .35rem .65rem;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: #fff7db;
+  color: #a16207;
+}
+
+.status-approved {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-declined {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.history-entry__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .75rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--border);
+}
+
+.history-entry__meta span {
+  display: block;
+  color: var(--muted);
+  font-size: .82rem;
+  margin-bottom: .2rem;
+}
+
+.history-entry__meta strong {
+  font-size: .95rem;
+}
+
+.empty-history-card {
+  text-align: center;
+}
+
+.empty-history-card h2 {
+  margin-bottom: .35rem;
+}
+
+.content-card h2 { margin-bottom: .75rem; }
+
+.content-card p + p { margin-top: .75rem; }
+
+.content-card ul {
+  padding-left: 1.5rem;
+}
+
+.content-card li { margin-bottom: .5rem; }
+
+/* ── Study card (latest / featured grid) ── */
+.latest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.study-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.study-card > .btn {
+  margin-top: 1rem;
+  align-self: flex-start;
+}
+
+.study-title {
+  font-weight: 600;
+  margin-bottom: .35rem;
+  line-height: 1.4;
+}
+
+.study-meta {
+  color: var(--muted);
+  font-size: .85rem;
+  margin-bottom: .5rem;
+}
+
+/* ── Filters ── */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters input,
+.filters select {
+  padding: .7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 130px;
+  max-width: 260px;
+  flex: 1 1 150px;
+  background: white;
+  font-size: .95rem;
+  box-sizing: border-box;
+}
+
+.filters input:focus,
+.filters select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(23,107,63,.12);
+}
+
+/* ── Repository layout ── */
+.repository-shell {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.repository-intro {
+  margin-bottom: 1rem;
+}
+
+.repository-table-wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+}
+
+.repository-table {
+  width: 100%;
+  min-width: 0;
+}
+
+.repository-table th,
+.repository-table td {
+  padding: .45rem .55rem;
+  vertical-align: middle;
+}
+
+.repository-table th:nth-child(1),
+.repository-table td:nth-child(1),
+.repository-table th:nth-child(4),
+.repository-table td:nth-child(4),
+.repository-table th:nth-child(6),
+.repository-table td:nth-child(6) {
+  white-space: nowrap;
+}
+
+.repository-table td:nth-child(2) {
+  min-width: 220px;
+}
+
+.repository-table td:nth-child(3) {
+  min-width: 180px;
+}
+
+/* Category column — constrain width so long names wrap */
+.repository-table th:nth-child(5),
+.repository-table td:nth-child(5) {
+  max-width: 160px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* PDF and Actions columns — never shrink or wrap */
+.repository-table th:nth-child(7),
+.repository-table td:nth-child(7),
+.repository-table th:nth-child(8),
+.repository-table td:nth-child(8) {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.table-container {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow-x: hidden;
+  padding: .25rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead { background: #e5f3eb; }
+
+thead th { background: #e5f3eb; }
+
+th, td {
+  padding: .45rem .55rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  word-break: break-word;
+  white-space: normal;
+}
+
+th { font-size: .8rem; }
+td { font-size: .88rem; }
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #f9fafb; }
+
+/* ── Tags ── */
+.tag {
+  display: inline-block;
+  padding: .25rem .5rem;
+  border-radius: 6px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: .78rem;
+  white-space: normal;
+  word-break: normal;
+  line-height: 1.4;
+}
+
+/* ── Viewer ── */
+.viewer-header {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.viewer-header h1 { margin-bottom: .5rem; font-size: 1.5rem; }
+
+.viewer-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.viewer-actions {
+  display: flex;
+  gap: .75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.pdf-container {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#pdfFrame {
+  width: 100%;
+  height: 900px;
+  border: none;
+}
+
+/* ── Footer ── */
+footer {
+  background: white;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* ── Empty state ── */
+.empty-row td {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .history-header,
+  .history-entry__top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+  .filters input,
+  .filters select {
+    width: 100%;
+    min-width: unset;
+  }
+  #pdfFrame {
+    height: 650px;
+  }
+}
+</style>
+
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="nav-left">
+      <div class="nav-logos">
+        <img src="{% static 'assets/DENR Logo.png' %}" alt="DENR Logo">
+        <img src="{% static 'assets/MVNP Logo.png' %}" alt="MVNP Logo">
+      </div>
+      <div>
+        <div class="nav-title">MVNP Research Repository</div>
+        <div class="nav-sub">Mahagnao Volcano Natural Park&nbsp;•&nbsp;Official Research Archive</div>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <a href="{% url 'home' %}"       class="{% block nav_home %}{% endblock %}">Home</a>
+      <a href="{% url 'repository' %}" class="{% block nav_repo %}{% endblock %}">Repository</a>
+      <a href="{% static 'assets/MVNP Research Guidelines-12242025.pdf' %}" target="_blank">Guidelines</a>
+      <a href="{% url 'about' %}"      class="{% block nav_about %}{% endblock %}">About</a>
+      <a href="{% url 'contact' %}"    class="{% block nav_contact %}{% endblock %}">Contact</a>
+      {% if user.is_authenticated %}
+        <div class="nav-account">
+          <button class="nav-burger" type="button" aria-expanded="false" aria-label="Open account menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div class="nav-burger-menu" role="menu">
+            {% if user.is_staff %}
+              <a href="{% url 'user_list' %}">Accounts</a>
+              <a href="{% url 'application_list' %}">Applications{% if applicant_count %} ({{ applicant_count }}){% endif %}</a>
+            {% else %}
+              <a href="{% url 'my_applications' %}">My Application</a>
+            {% endif %}
+            <a href="#" class="profile-panel-trigger" data-panel="profile-panel">My Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+          </div>
+        </div>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main>
+  {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+        <div class="flash {{ message.tags }}" data-timeout="5000">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer>
+  <p>© 2026 Mahagnao Volcano Natural Park – Protected Area Management Office</p>
+</footer>
+
+{% if user.is_authenticated %}
+<div class="profile-overlay" id="profile-panel" role="dialog" aria-modal="true" aria-label="My Profile">
+  <div class="profile-drawer">
+
+    <div class="profile-drawer-header">
+      <div class="profile-avatar">{{ user.username|first|upper }}</div>
+      <div>
+        <div class="profile-drawer-name">
+          {% if user.get_full_name %}{{ user.get_full_name }}{% else %}{{ user.username }}{% endif %}
+        </div>
+        <div class="profile-drawer-role">{% if user.is_staff %}Administrator{% else %}Researcher{% endif %}</div>
+      </div>
+      <button class="profile-close" aria-label="Close profile panel">&times;</button>
+    </div>
+
+    <div class="profile-tabs" role="tablist">
+      <button class="profile-tab active" role="tab" data-tab="tab-info">Personal Info</button>
+      <button class="profile-tab" role="tab" data-tab="tab-password">Change Password</button>
+    </div>
+
+    <div class="profile-tab-content active" id="tab-info">
+      <form method="post" action="{% url 'profile_update' %}" class="profile-form">
+        {% csrf_token %}
+        <div class="pf-row">
+          <div class="pf-field">
+            <label for="id_first_name">First Name</label>
+            <input type="text" id="id_first_name" name="first_name"
+                   value="{{ user.first_name }}" placeholder="First name" maxlength="150">
+          </div>
+          <div class="pf-field">
+            <label for="id_last_name">Last Name</label>
+            <input type="text" id="id_last_name" name="last_name"
+                   value="{{ user.last_name }}" placeholder="Last name" maxlength="150">
+          </div>
+        </div>
+        <div class="pf-field">
+          <label for="id_email">Email Address</label>
+          <input type="email" id="id_email" name="email"
+                 value="{{ user.email }}" placeholder="your@email.com">
+        </div>
+        <div class="pf-field pf-readonly">
+          <label>Username</label>
+          <input type="text" value="{{ user.username }}" disabled>
+          <span class="pf-hint">Username cannot be changed here.</span>
+        </div>
+        <button type="submit" class="pf-btn-primary">Save Changes</button>
+      </form>
+    </div>
+
+    <div class="profile-tab-content" id="tab-password">
+      <form method="post" action="{% url 'profile_password_change' %}" class="profile-form">
+        {% csrf_token %}
+        <div class="pf-field">
+          <label for="id_old_password">Current Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="id_old_password" name="old_password"
+                   placeholder="Enter current password" autocomplete="current-password">
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility" onclick="togglePassword(this)">
+              <svg class="eye-icon eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="eye-icon eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="pf-field">
+          <label for="id_new_password1">New Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="id_new_password1" name="new_password1"
+                   placeholder="Enter new password" autocomplete="new-password">
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility" onclick="togglePassword(this)">
+              <svg class="eye-icon eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="eye-icon eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="pf-field">
+          <label for="id_new_password2">Confirm New Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="id_new_password2" name="new_password2"
+                   placeholder="Re-enter new password" autocomplete="new-password">
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility" onclick="togglePassword(this)">
+              <svg class="eye-icon eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="eye-icon eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="pf-btn-primary">Update Password</button>
+      </form>
+    </div>
+
+  </div>
+</div>{% endif %}
+
+<style>
+/* ── Profile Panel ── */
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 9000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+.profile-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.profile-drawer {
+  position: absolute;
+  top: 0; right: 0;
+  width: min(420px, 100vw);
+  height: 100%;
+  background: #fff;
+  box-shadow: -8px 0 40px rgba(0,0,0,.15);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto;
+}
+.profile-overlay.open .profile-drawer {
+  transform: translateX(0);
+}
+
+/* Header */
+.profile-drawer-header {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.profile-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.profile-drawer-name { font-weight: 700; font-size: 1rem; color: var(--text); }
+.profile-drawer-role {
+  font-size: .75rem;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 999px;
+  padding: .15rem .55rem;
+  display: inline-block;
+  margin-top: .2rem;
+}
+.profile-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: none; border: none;
+  font-size: 1.5rem; line-height: 1;
+  color: var(--muted); cursor: pointer;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.profile-close:hover { background: var(--primary-light); color: var(--primary); }
+
+/* Tabs */
+.profile-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  padding: 0 1.25rem;
+  gap: .25rem;
+}
+.profile-tab {
+  background: none; border: none;
+  padding: .85rem .75rem;
+  font-size: .875rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color .15s, border-color .15s;
+}
+.profile-tab:hover { color: var(--primary); }
+.profile-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+/* Tab content */
+.profile-tab-content { display: none; padding: 1.5rem 1.25rem; }
+.profile-tab-content.active { display: block; }
+
+/* Form fields */
+.profile-form { display: flex; flex-direction: column; gap: 1rem; }
+.pf-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.pf-field { display: flex; flex-direction: column; gap: .35rem; }
+.pf-field label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.pf-field input {
+  padding: .6rem .8rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: .9rem;
+  color: var(--text);
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+  width: 100%;
+}
+.pf-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(23,107,63,.12);
+}
+.pf-field input:disabled {
+  background: var(--bg);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+.pf-readonly .pf-hint {
+  font-size: .75rem;
+  color: var(--muted);
+  margin-top: .1rem;
+}
+.pf-btn-primary {
+  margin-top: .5rem;
+  padding: .7rem 1.5rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.pf-btn-primary:hover { background: #145c35; transform: translateY(-1px); }
+.pf-btn-primary:active { transform: translateY(0); }
+
+@media (max-width: 480px) {
+  .pf-row { grid-template-columns: 1fr; }
+}
+</style>
+
+{% block extra_js %}{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // ── Navigation Menu Toggle ──
+  var menuToggle = document.querySelector('.nav-burger');
+  var menu = document.querySelector('.nav-burger-menu');
+
+  if (menuToggle && menu) {
+    menuToggle.addEventListener('click', function(){
+      var isOpen = menu.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', function(event) {
+      if (!menu.contains(event.target) && !menuToggle.contains(event.target)) {
+        menu.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // ── Flash Notifications Auto-Dismiss ──
+  var flashElements = document.querySelectorAll('.flash');
+  flashElements.forEach(function(flashEl){
+    flashEl.style.cursor = 'pointer';
+    flashEl.addEventListener('click', function(){ hideFlash(flashEl); });
+
+    var timeoutAttr = flashEl.getAttribute('data-timeout');
+    var timeout = parseInt(timeoutAttr, 10);
+
+    if (isFinite(timeout) && timeout > 0) {
+      setTimeout(function(){ hideFlash(flashEl); }, timeout);
+    }
+  });
+
+  // ── Profile Panel ──
+  var profileOverlay = document.getElementById('profile-panel');
+  var profileTriggers = document.querySelectorAll('.profile-panel-trigger');
+  var profileClose = document.querySelector('.profile-close');
+
+  function openProfilePanel() {
+    if (!profileOverlay) return;
+    profileOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Close burger menu if open
+    if (menu) { menu.classList.remove('open'); menuToggle && menuToggle.setAttribute('aria-expanded','false'); }
+  }
+  function closeProfilePanel() {
+    if (!profileOverlay) return;
+    profileOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  profileTriggers.forEach(function(trigger) {
+    trigger.addEventListener('click', function(e) {
+      e.preventDefault();
+      openProfilePanel();
+    });
+  });
+
+  if (profileClose) profileClose.addEventListener('click', closeProfilePanel);
+
+  if (profileOverlay) {
+    profileOverlay.addEventListener('click', function(e) {
+      if (e.target === profileOverlay) closeProfilePanel();
+    });
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeProfilePanel();
+  });
+
+  // ── Profile Tabs ──
+  var tabs = document.querySelectorAll('.profile-tab');
+  var tabContents = document.querySelectorAll('.profile-tab-content');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      tabContents.forEach(function(c){ c.classList.remove('active'); });
+      tab.classList.add('active');
+      var target = document.getElementById(tab.getAttribute('data-tab'));
+      if (target) target.classList.add('active');
+    });
+  });
+
+  // ── Auto-open profile panel on page load if there was a profile error ──
+  // (flash messages from profile_update or profile_password_change)
+  var flashMessages = document.querySelectorAll('.flash.error');
+  if (flashMessages.length > 0 && profileOverlay) {
+    var referrer = document.referrer || '';
+    if (referrer.indexOf('profile') !== -1 || window.location.hash === '#profile') {
+      openProfilePanel();
+    }
+  }
+
+  function hideFlash(el){
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.maxHeight = '0';
+    el.style.margin = '0';
+    el.style.paddingTop = '0';
+    el.style.paddingBottom = '0';
+    setTimeout(function(){ 
+      if (el.parentNode) el.parentNode.removeChild(el); 
+    }, 360);
+  }
+
+  // ── Password Show/Hide Toggle ──
+  window.togglePassword = function(btn) {
+    var wrapper = btn.closest('.password-wrapper');
+    var input = wrapper.querySelector('input');
+    var eyeOpen = btn.querySelector('.eye-open');
+    var eyeClosed = btn.querySelector('.eye-closed');
+    if (input.type === 'password') {
+      input.type = 'text';
+      eyeOpen.style.display = 'none';
+      eyeClosed.style.display = 'inline';
+    } else {
+      input.type = 'password';
+      eyeOpen.style.display = 'inline';
+      eyeClosed.style.display = 'none';
+    }
+  };
+});
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

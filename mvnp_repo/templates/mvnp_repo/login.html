@@ -1,0 +1,101 @@
+{% extends "mvnp_repo/base.html" %}
+
+{% block title %}Login — MVNP Research Repository{% endblock %}
+
+{% block extra_head %}
+<style>
+  .auth-form input:disabled {
+    background: #f3f4f6;
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  .auth-form button:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+  <h1 style="text-align: center;">Sign in</h1>
+  <p style="text-align: center;">
+    Access the MVNP research repository with your account.
+  </p>
+
+  <form method="post" class="auth-form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="form-errors">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% if login_error %}
+      <div class="form-errors">{{ login_error }}</div>
+    {% endif %}
+
+    <label>
+      {{ form.username.label_tag }}
+      <input type="text"
+             name="{{ form.username.html_name }}"
+             id="{{ form.username.id_for_label }}"
+             value="{{ form.username.value|default_if_none:'' }}"
+             {% if login_locked %}disabled{% endif %}>
+      {% if form.username.errors %}
+        <div class="form-errors">{{ form.username.errors }}</div>
+      {% endif %}
+    </label>
+
+    <label>
+      {{ form.password.label_tag }}
+      <div class="password-wrapper">
+        <input type="password"
+               name="{{ form.password.html_name }}"
+               id="{{ form.password.id_for_label }}"
+               {% if login_locked %}disabled{% endif %}>
+        <button type="button" class="password-toggle" aria-label="Toggle password visibility" onclick="togglePassword(this)" {% if login_locked %}disabled{% endif %}>
+          <svg class="eye-icon eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg class="eye-icon eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </button>
+      </div>
+      {% if form.password.errors %}
+        <div class="form-errors">{{ form.password.errors }}</div>
+      {% endif %}
+    </label>
+
+    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+      <button type="submit" class="btn btn-primary" style="padding: 0.6rem 2.5rem; width: 170px; height: 50px;" {% if login_locked %}disabled{% endif %}>Sign in</button>
+    </div>  
+  </form>
+
+  <p style="text-align: center; margin-top: 1.5rem;">
+    Don't have an account? <a href="{% url 'signup' %}" style="text-decoration:none; color: #000; font-weight: bold;">Create one</a>.
+  </p>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePassword(btn) {
+  var wrapper = btn.closest('.password-wrapper');
+  var input = wrapper.querySelector('input');
+  var eyeOpen = btn.querySelector('.eye-open');
+  var eyeClosed = btn.querySelector('.eye-closed');
+  if (input.type === 'password') {
+    input.type = 'text';
+    eyeOpen.style.display = 'none';
+    eyeClosed.style.display = 'inline';
+  } else {
+    input.type = 'password';
+    eyeOpen.style.display = 'inline';
+    eyeClosed.style.display = 'none';
+  }
+}
+</script>
+{% endblock %}

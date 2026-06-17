@@ -1,0 +1,484 @@
+{% extends "mvnp_repo/base.html" %}
+
+{% block title %}User Accounts — MVNP Repository{% endblock %}
+{% block nav_repo %}{% endblock %}
+
+{% block content %}
+<div class="ua-page">
+
+  <!-- Page header -->
+  <div class="ua-header">
+    <div class="ua-header__left">
+      <div class="ua-header__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="ua-title">User Accounts</h1>
+        <p class="ua-subtitle">Manage registered accounts and view when they joined.</p>
+      </div>
+    </div>
+    <a href="{% url 'user_add' %}" class="ua-add-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Add Account
+    </a>
+  </div>
+
+  <!-- Search -->
+  <form method="get" class="ua-search-form" id="ua-search-form">
+    <div class="ua-search-wrap">
+      <svg class="ua-search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="ua-search-input" type="text" name="q" id="ua-search-input"
+             value="{{ q }}" placeholder="Search by username or email…" autocomplete="off">
+      <button type="button" class="ua-search-clear" id="ua-search-clear"
+              aria-label="Clear search">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </form>
+
+  <!-- Table -->
+  <div class="ua-table-wrap">
+    <table class="ua-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Joined</th>
+          <th>Active</th>
+          <th>Staff</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>
+            <div class="ua-user-cell">
+              <span class="ua-avatar">{{ user.username|slice:":1"|upper }}</span>
+              <span class="ua-username">{{ user.username }}</span>
+            </div>
+          </td>
+          <td class="ua-email">{{ user.email|default:'—' }}</td>
+          <td class="ua-date">{{ user.date_joined|date:'M d, Y' }}</td>
+          <td>
+            {% if user.is_active %}
+              <span class="ua-badge ua-badge--yes">Active</span>
+            {% else %}
+              <span class="ua-badge ua-badge--no">Inactive</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.is_staff %}
+              <span class="ua-badge ua-badge--staff">Staff</span>
+            {% else %}
+              <span class="ua-badge ua-badge--user">User</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="ua-actions">
+              <a class="ua-btn-edit" href="{% url 'user_edit' user.id %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit
+              </a>
+              <a class="ua-btn-delete" href="{% url 'user_delete' user.id %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6"/><path d="M14 11v6"/>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="ua-empty">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <p>No user accounts found.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<style>
+/* ── User Accounts Page Layout ── */
+.ua-page {
+  max-width: 860px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Header ── */
+.ua-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  /* Green accent strip on top */
+  border-top: 4px solid var(--primary);
+}
+
+.ua-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ua-header__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ua-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.ua-subtitle {
+  color: var(--muted);
+  font-size: .875rem;
+  margin-top: .15rem;
+}
+
+.ua-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  padding: .6rem 1.1rem;
+  border-radius: 10px;
+  font-size: .875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  box-shadow: 0 2px 8px rgba(23,107,63,.25);
+}
+.ua-add-btn:hover {
+  background: #145c35;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(23,107,63,.3);
+}
+
+/* ── Search ── */
+.ua-search-form { width: 100%; }
+
+.ua-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ua-search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.ua-search-input {
+  width: 100%;
+  padding: .75rem 1rem .75rem 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: .9rem;
+  background: white;
+  color: var(--text);
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.ua-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(23,107,63,.12);
+}
+
+.ua-search-input::placeholder { color: var(--muted); }
+
+.ua-search-clear {
+  position: absolute;
+  right: .75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .25rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background .15s, color .15s;
+}
+.ua-search-clear:hover {
+  background: #f3f4f6;
+  color: var(--text);
+}
+
+/* ── Table ── */
+.ua-table-wrap {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ua-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ua-table thead {
+  background: #f0f9f4;
+}
+
+.ua-table thead th {
+  padding: .75rem 1rem;
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--primary);
+  border-bottom: 1px solid #c6e8d4;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ua-table tbody td {
+  padding: .9rem 1rem;
+  font-size: .875rem;
+  color: var(--text);
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.ua-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ua-table tbody tr {
+  transition: background .12s;
+}
+
+.ua-table tbody tr:hover {
+  background: #f9fdfb;
+}
+
+/* ── User cell with avatar ── */
+.ua-user-cell {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+
+.ua-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: .8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ua-username {
+  font-weight: 600;
+}
+
+.ua-email {
+  color: var(--muted) !important;
+  font-size: .83rem !important;
+}
+
+.ua-date {
+  color: var(--muted) !important;
+  white-space: nowrap;
+  font-size: .83rem !important;
+}
+
+/* ── Status badges ── */
+.ua-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .25rem .65rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ua-badge--yes {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.ua-badge--no {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.ua-badge--staff {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.ua-badge--user {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Action buttons ── */
+.ua-actions {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.ua-btn-edit,
+.ua-btn-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .75rem;
+  border-radius: 7px;
+  font-size: .8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s, color .15s, border-color .15s, transform .1s;
+  white-space: nowrap;
+  border: 1.5px solid;
+}
+
+.ua-btn-edit {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: white;
+}
+
+.ua-btn-edit:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.ua-btn-delete {
+  color: #b91c1c;
+  border-color: #fca5a5;
+  background: white;
+}
+
+.ua-btn-delete:hover {
+  background: #b91c1c;
+  color: white;
+  border-color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+/* ── Empty state ── */
+.ua-empty {
+  text-align: center !important;
+  padding: 3rem 1rem !important;
+  color: var(--muted) !important;
+}
+
+.ua-empty svg {
+  color: var(--border);
+  margin-bottom: .75rem;
+}
+
+.ua-empty p {
+  font-size: .9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .ua-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .ua-add-btn { width: 100%; justify-content: center; }
+  .ua-email, .ua-date { display: none; }
+}
+</style>
+
+<script>
+(function () {
+  var form  = document.getElementById('ua-search-form');
+  var input = document.getElementById('ua-search-input');
+  var clear = document.getElementById('ua-search-clear');
+
+  // Set initial visibility based on whether there's a value
+  clear.style.display = input.value ? 'flex' : 'none';
+
+  // Show/hide clear button as user types
+  input.addEventListener('input', function () {
+    clear.style.display = input.value ? 'flex' : 'none';
+  });
+
+  // Clear button: wipe input and submit immediately → shows all users
+  clear.addEventListener('click', function () {
+    input.value = '';
+    clear.style.display = 'none';
+    form.submit();
+  });
+
+  // Auto-submit when input is cleared via keyboard (select-all + delete, etc.)
+  input.addEventListener('keyup', function (e) {
+    if (input.value === '' && e.key !== 'Tab') {
+      form.submit();
+    }
+  });
+})();
+</script>
+{% endblock %}

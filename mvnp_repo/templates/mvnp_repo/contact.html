@@ -1,0 +1,55 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}Contact — MVNP Research Repository{% endblock %}
+{% block nav_contact %}active{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Contact Information</h1>
+<p class="page-subtitle">
+  For research coordination, permits, repository inquiries, and technical concerns.
+</p>
+
+<div class="content-card">
+  <h2>Protected Area Management Office</h2>
+  <p>Mahagnao Volcano Natural Park (MVNP)</p>
+  <p>Protected Area Management Office (PAMO)</p>
+  <p>Barangay Mahagnao, Burauen, Leyte</p>
+  <p>Email: <a href="mailto:mvnp@denr.gov.ph" style="color:var(--primary);">mvnp@denr.gov.ph</a></p>
+  <p>Telephone: (053) XXX-XXXX</p>
+</div>
+
+<div class="content-card">
+  <h2>View Research Applications</h2>
+  {% if user.is_authenticated %}
+    {% if user.is_staff %}
+      <p style="margin-top:1rem;">
+        <a class="btn btn-primary"
+           href="{% url 'application_list' %}">
+          View Applications
+        </a>
+      </p>
+    {% else %}
+      <p>
+        Researchers intending to conduct studies within MVNP must comply with the MVNP Research
+        Guidelines and submit the required application documents through the official research
+        application portal.
+      </p>
+      <p style="margin-top:1rem;">
+        <a class="btn btn-primary"
+           href="{% url 'research_application' %}">
+          Open Research Application Form
+        </a>
+      </p>
+    {% endif %}
+  {% else %}
+  <p>
+    Only registered users can apply for research access. Please log in or create an account to continue.
+  </p>
+  <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+    <a class="btn btn-secondary" href="{% url 'login' %}">Login</a>
+    <a class="btn btn-primary" href="{% url 'signup' %}">Sign up</a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

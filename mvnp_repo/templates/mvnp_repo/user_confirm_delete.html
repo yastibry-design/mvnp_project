@@ -1,0 +1,24 @@
+{% extends "mvnp_repo/base.html" %}
+
+{% block title %}Delete Account — MVNP Repository{% endblock %}
+
+{% block content %}
+<div class="auth-card auth-card--wide">
+  <h1>Delete Account</h1>
+  <p class="auth-card__subtitle">Confirm removal of this user account. This cannot be undone.</p>
+
+  <div class="content-card">
+    <p><strong>Username:</strong> {{ user_obj.username }}</p>
+    <p><strong>Email:</strong> {{ user_obj.email|default:'—' }}</p>
+    <p><strong>Joined:</strong> {{ user_obj.date_joined|date:'M d, Y H:i' }}</p>
+    <p><strong>Active:</strong> {% if user_obj.is_active %}Yes{% else %}No{% endif %}</p>
+    <p><strong>Staff:</strong> {% if user_obj.is_staff %}Yes{% else %}No{% endif %}</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete Account</button>
+    <a href="{% url 'user_list' %}" class="btn btn-secondary btn-sm">Cancel</a>
+  </form>
+</div>
+{% endblock %}

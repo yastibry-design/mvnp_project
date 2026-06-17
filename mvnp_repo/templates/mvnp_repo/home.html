@@ -1,0 +1,99 @@
+{% extends "mvnp_repo/base.html" %}
+{% block title %}MVNP Research Repository{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="hero">
+  <div>
+    <h1>Mahagnao Volcano Natural Park<br>Research Repository</h1>
+    <p>
+      The Official Repository of Scientific Research, Biodiversity Assessments,
+      Technical Reports, Journal Articles, Thesis and other knowledge products
+      generated within Mahagnao Volcano Natural Park.
+    </p>
+    <div class="hero-buttons">
+      {% if user.is_authenticated %}
+        <a href="{% url 'repository' %}" class="btn btn-primary">Browse Repository</a>
+        <a href="{% url 'about' %}" class="btn btn-secondary">Research Guidelines</a>
+        {% if not user.is_staff %}
+          <a href="{% url 'research_application' %}" class="btn btn-secondary">Submit Application</a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
+        <a href="{% url 'signup' %}" class="btn btn-secondary">Sign Up</a>
+        <a href="{% url 'about' %}" class="btn btn-secondary">Research Guidelines</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="hero-note">
+    <strong>Research Governance</strong><br><br>
+    Research activities conducted within Mahagnao Volcano Natural Park shall comply with
+    applicable provisions of R.A 11038 (ENIPAS Act), R.A 9147 (Wildlife Resources Conservation
+    and Protection Act), and relevant DENR policies and issuances.
+  </div>
+</section>
+
+<!-- Repository Statistics -->
+<section>
+  <h2 class="section-title">Repository Statistics</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Total Studies</div>
+      <div class="card-value">{{ total_studies }}</div>
+      <div class="card-sub">Research outputs archived</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Journal Articles</div>
+      <div class="card-value">{{ journal_articles }}</div>
+      <div class="card-sub">Peer-reviewed publications</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Research Span</div>
+      <div class="card-value">{{ research_years }}</div>
+      <div class="card-sub">Years represented</div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Research -->
+{% if featured %}
+<section>
+  <h2 class="section-title">Featured Research</h2>
+  <div class="latest-grid">
+    {% for study in featured %}
+    <div class="study-card">
+      <div class="study-title">{{ study.title }}</div>
+      <div class="study-meta">{{ study.authors }} ({{ study.year }})</div>
+      <span class="tag">{{ study.category.name }}</span>
+      <br><br>
+      <p>{{ study.abstract }}</p>
+      <br>
+      <a class="btn btn-secondary" href="{% url 'viewer' study.study_id %}">View Research</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Latest Research -->
+<section>
+  <h2 class="section-title">Latest Research</h2>
+  <div class="latest-grid">
+    {% for study in latest %}
+    <div class="study-card">
+      <div class="study-title">{{ study.title }}</div>
+      <div class="study-meta">{{ study.authors }} ({{ study.year }})</div>
+      <span class="tag">{% if study.category %}{{ study.category.name }}{% endif %}</span>
+      <br><br>
+      <p>{{ study.abstract }}</p>
+      <br>
+      <a class="btn btn-primary" href="{% url 'viewer' study.study_id %}">Read Study</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}
