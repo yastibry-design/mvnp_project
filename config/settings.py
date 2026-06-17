@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import cloudinary
+import dj_database_url
 
 # ─── Load .env in development ─────────────────────────────────────────────────
 try:
@@ -65,10 +66,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=False,
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -115,18 +117,18 @@ MVNP_NOTIFICATION_EMAIL = 'mvnp@denr.gov.ph'
 import cloudinary
 
 cloudinary.config(
-    cloud_name = 'diggprybb',
-    api_key    = '241161852468148',
-    api_secret = 'EmhP6Y6X6jJPmfYNLiim-dF7cEg',
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'diggprybb'),
+    api_key    = os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
     secure     = True,
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME' : 'diggprybb',
-    'API_KEY'    : '241161852468148',
-    'API_SECRET' : 'EmhP6Y6X6jJPmfYNLiim-dF7cEg',
+    'CLOUD_NAME' : os.environ.get('CLOUDINARY_CLOUD_NAME', 'diggprybb'),
+    'API_KEY'    : os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET' : os.environ.get('CLOUDINARY_API_SECRET'),
     'RESOURCE_TYPE': 'auto',
     'UNSIGNED_UPLOADS': True,  # ✅ Allow public/unsigned uploads
 }
