@@ -355,12 +355,28 @@ def pdf_proxy(request, study_id):
     # ── 2. Fall back to Cloudinary (production / deployment path) ────────────
     if pdf_bytes is None:
         cloudinary_url = study.pdf_url
+        print(f"DEBUG pdf_proxy: stored={str(study.pdf_file)!r}, cloudinary_url={cloudinary_url!r}")
         if cloudinary_url:
             try:
                 r = http_requests.get(cloudinary_url, timeout=30)
+                print(f"DEBUG pdf_proxy: HTTP status={r.status_code}")
                 if r.status_code == 200:
                     pdf_bytes = r.content
-            except Exception:
+                else:
+                    # Try unsigned URL as fallback
+                    import cloudinary
+                    resource = study.pdf_file
+                    unsigned_url = cloudinary.CloudinaryResource(
+                        resource.public_id,
+                        resource_type=resource.resource_type or 'raw',
+                    ).build_url(secure=True)
+                    print(f"DEBUG pdf_proxy: trying unsigned_url={unsigned_url!r}")
+                    r2 = http_requests.get(unsigned_url, timeout=30)
+                    print(f"DEBUG pdf_proxy: unsigned HTTP status={r2.status_code}")
+                    if r2.status_code == 200:
+                        pdf_bytes = r2.content
+            except Exception as e:
+                print(f"DEBUG pdf_proxy: exception={e}")
                 pass
 
     if pdf_bytes is None:
