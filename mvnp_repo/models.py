@@ -75,8 +75,15 @@ class Study(models.Model):
         # uploads and would produce a broken double-prefixed URL.
         import cloudinary
         resource = self.pdf_file  # CloudinaryResource instance
+        public_id = resource.public_id
+        # Raw resources on Cloudinary keep the file extension as part of the
+        # delivery path. If it's missing here, the generated URL 404s even
+        # though the file exists (e.g. "mvnp/repository/abc123" instead of
+        # "mvnp/repository/abc123.pdf").
+        if not public_id.lower().endswith('.pdf'):
+            public_id += '.pdf'
         return cloudinary.CloudinaryResource(
-            resource.public_id,
+            public_id,
             resource_type=resource.resource_type or 'raw',
         ).build_url(secure=True, sign_url=True)
 
@@ -149,8 +156,11 @@ class ResearchApplication(models.Model):
             return None
         import cloudinary
         resource = self.supporting_documents  # CloudinaryResource instance
+        public_id = resource.public_id
+        if not public_id.lower().endswith('.pdf'):
+            public_id += '.pdf'
         return cloudinary.CloudinaryResource(
-            resource.public_id,
+            public_id,
             resource_type=resource.resource_type or 'raw',
         ).build_url(secure=True, sign_url=True)
 
